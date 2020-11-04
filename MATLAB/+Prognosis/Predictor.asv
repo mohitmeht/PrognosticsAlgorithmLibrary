@@ -142,16 +142,10 @@ classdef Predictor < handle
                 P.predictions.states(:,logicalIndices) = X(:,logicalIndices);
                 P.predictions.inputs(:,logicalIndices) = U(:,logicalIndices);
             end
-            try
-                tmp = P.model.outputEqn(t,X,U,0);
-                T = tmp(1,:)';
-            catch
-                warning('Skipping!!!');
-            end
+            Z = OutputEqn(parameters,t,X,U,N)
             % Compute probability of reaching threshold within horizon
             numReached = length(find(P.predictions.thresholdReached));
             P.predictions.probability = numReached/numSamples;
-            P.predictions.TatDischarge = T;
             
         end
         
