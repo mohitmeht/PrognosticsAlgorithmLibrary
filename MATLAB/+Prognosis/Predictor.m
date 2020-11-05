@@ -141,17 +141,18 @@ classdef Predictor < handle
                 % Update states and inputs at time of threshold crossing
                 P.predictions.states(:,logicalIndices) = X(:,logicalIndices);
                 P.predictions.inputs(:,logicalIndices) = U(:,logicalIndices);
-            end
             try
-                tmp = P.model.outputEqn(t,X,U,0);
-                T = tmp(1,:)';
+                tmp = X(1,:);
+                T = tmp-273.15;
+                P.predictions.TatDischarge(:,logicalIndices) = T(:,logicalIndices);
+%                 disp(length(find(P.predictions.thresholdReached==1)))
             catch
                 warning('Skipping!!!');
+            end                
             end
             % Compute probability of reaching threshold within horizon
             numReached = length(find(P.predictions.thresholdReached));
             P.predictions.probability = numReached/numSamples;
-            P.predictions.TatDischarge = T;
             
         end
         
