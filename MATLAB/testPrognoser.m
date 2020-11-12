@@ -1,4 +1,4 @@
-function outputdata = testPrognoser(loads)
+function outputdata = testPrognoser(loads,horizon,numSamples)
 % testPrognoser   Test Prognoser class for Battery model
 %
 %   Copyright (c) 2016 United States Government as represented by the
@@ -64,14 +64,17 @@ battery.inputEqnHandle = @(P,t)Battery.InputEqn(P,t,loads);
 % battery.inputEqnHandle = @(P,t)Battery.InputEqn(P,t);
 [Ttosim,~,~,Z] = battery.simulateToThreshold('printTime','60');
 trueEOD = Ttosim(end);
-figure(4)
+figure(8)
 plot(Ttosim,Z(2,:))
+figure(7)
+plot(Ttosim,Z(1,:))
 % trueEOD = Ttosim(end);
 endTemp = Z(1,end);
 disp(' ')
 disp('-------- Final Results --------')
 disp(' ')
 fprintf('Discharge time: %g s\nDischarge temperature: %g degC\n',Ttosim(end),endTemp);
+fprintf('Ambient temperature: %g degC\n',battery.P.x0.Tb-273.15);
 disp(' ')
 disp('-------- End of final results --------')
 disp(' ')
@@ -97,8 +100,10 @@ gains(2:2:end) = 10;
 inputParameterSampler = @(N) repmat(loads,1,N) + repmat(gains,1,N).*(rand(length(loads),N)-0.5);
 
 % Create Prognoser
-horizon = 7200;
-numSamples = 100;
+if nargin<2
+    horizon = 7200;
+    numSamples = 100;
+end
 prognoser = Prognosis.Prognoser('model',battery,'observer',UKF,...
     'horizon',horizon,'numSamples',numSamples,...
     'stateSampler',@Observers.meanCovSampler,...
@@ -177,13 +182,18 @@ for i=2:length(T)
         curEODMin = min(prognoser.predictor.predictions.thresholdTimes);
         curTMin = min(prognoser.predictor.predictions.TatDischarge);
         EODMin(i) = curEODMin;
-        TMin(i) = curTMin;
+        try
+            TMin(i) = curTMin;
+        catch
+           disp('I Failed!!!') 
+        end
         curEODMax = max(prognoser.predictor.predictions.thresholdTimes);
         curTMax = max(prognoser.predictor.predictions.TatDischarge);
         EODMax(i) = curEODMax;
         TMax(i) = curTMax;
         plotEOD(T(i),curEODMin,curEODMean,curEODMax)
-        plotT(T(i),curTMin,curTMean,curTMax)
+        plotTatEOD(T(i),curTMin,curTMean,curTMax)
+        plotT(T(i),z)
     end
 
 
@@ -224,6 +234,7 @@ outputdata.maxTemp = TMax;
 function plotleftoverdata(T,Z,ZEst,predictionTimes,EODMean,EODMin,EODMax,trueEOD,loads,ref_time,ref_voltage)
 % Plot output estimates
 figure(1);
+clf;
 plot(T,Z(1,:),'.',T,ZEst(1,:),'--');
 title('Temperature Estimates');
 xlabel('Time (s)')
@@ -266,7 +277,7 @@ if nargin>9
 end
 
 
-function plotT(t,curTMin,curTMean,curTMax)
+function plotTatEOD(t,curTMin,curTMean,curTMax)
     figure(6)
     hold on;
     plot(t,curTMean,'o','Color','green','DisplayName','Estimated T Mean','MarkerFaceColor','green')
@@ -288,3 +299,25 @@ function plotEOD(t,curEODMin,curEODMean,curEODMax)
     ylabel('EOD (s)')
     drawnow;
 
+function plotT(t,z)
+    figure(1);
+    subplot(2,1,1)
+    hold on
+    plot(t,z(1,:),'o','Color','blue','MarkerFaceColor','blue');
+    xlabel('Time (s)')
+    ylabel('Temperature (deg C)');
+    axis square
+    box on
+    ax = gca;
+    ax.Color = 'None';
+    subplot(2,1,2)
+    hold on    
+    plot(t,z(2,:),'o','Color','blue','MarkerFaceColor','blue');
+    xlabel('Time (s)')
+    ylabel('Voltage (V)');
+    axis square
+    box on
+    ax = gca;
+    ax.Color = 'None';    
+    drawnow;
+    xlim([-10,3700])
