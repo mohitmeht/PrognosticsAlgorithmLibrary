@@ -14,7 +14,7 @@ if nargin<1
 %     loads = [8; 10*60; 4; 5*60; 12; 15*60; 5; 20*60; 10; 10*60];
 %     crate = 6.56;
 %     loadval = oneC.*crate;
-    trueEOD = 433.02;
+    trueEOD = 430;%433.02;
     trueEODinHr = trueEOD./3600;
     loadval = oneC./trueEODinHr;   
     fprintf('Maximum current: %g\n',loadval);
@@ -62,12 +62,28 @@ ax.Color = 'None';
 % loads = [loads;loadval];
 battery.inputEqnHandle = @(P,t)Battery.InputEqn(P,t,loads);
 % battery.inputEqnHandle = @(P,t)Battery.InputEqn(P,t);
-[Ttosim,~,~,Z] = battery.simulateToThreshold('printTime','60');
-trueEOD = Ttosim(end);
-figure(8)
-plot(Ttosim,Z(2,:))
+[Ttosim,~,~,Z] = battery.simulateToThreshold();
+if nargin>1
+    trueEOD = Ttosim(end);
+else
+    figure(8)
+    plot(Ttosim,Z(2,:))
+    hold on
+    plot(ref_time,ref_voltage,'-','Color','red');
+    hold off
+    title('Voltage Estimates');
+    xlabel('Time (s)');
+    ylabel('Voltage (V)');
+    legend('Simulated','Experimental');
+    axis square
+    box on
+    ax = gca;
+    ax.Color = 'None';    
+end
+
 figure(7)
 plot(Ttosim,Z(1,:))
+
 % trueEOD = Ttosim(end);
 endTemp = Z(1,end);
 disp(' ')
@@ -169,9 +185,9 @@ for i=2:length(T)
         prognoser.predict();
         
         % Print some status
-        fprintf('Time: %g s\n',T(i));
-        battery.printOutputs(z);
-        fprintf('    EOD: %g s\n',mean(prognoser.predictor.predictions.thresholdTimes));
+%         fprintf('Time: %g s\n',T(i));
+%         battery.printOutputs(z);
+%         fprintf('    EOD: %g s\n',mean(prognoser.predictor.predictions.thresholdTimes));
         
         % Save some prediction data
         predictionTimes(i) = T(i);
@@ -191,9 +207,9 @@ for i=2:length(T)
         curTMax = max(prognoser.predictor.predictions.TatDischarge);
         EODMax(i) = curEODMax;
         TMax(i) = curTMax;
-        plotEOD(T(i),curEODMin,curEODMean,curEODMax)
-        plotTatEOD(T(i),curTMin,curTMean,curTMax)
-        plotT(T(i),z)
+%         plotEOD(T(i),curEODMin,curEODMean,curEODMax)
+%         plotTatEOD(T(i),curTMin,curTMean,curTMax)
+%         plotT(T(i),z)
     end
 
 
@@ -207,17 +223,22 @@ for i=2:length(T)
     XEst(:,i) = UKF.x;
     ZEst(:,i) = UKF.z;
 end
-hold off
-legend('Predicted EOD Mean','Predicted EOD Min','Predicted EOD Max');
-axis square
-box on
-ax = gca;
-ax.Color = 'None';
+% hold off
+% legend('Predicted EOD Mean','Predicted EOD Min','Predicted EOD Max');
+% axis square
+% box on
+% ax = gca;
+% ax.Color = 'None';
 % Compute actual end of discharge time, giving the exact loading parameters
 battery.inputEqnHandle = @(P,t)Battery.InputEqn(P,t,loads);
 % Ttosim = battery.simulateToThreshold();
 % trueEOD = Ttosim(end);
-plotleftoverdata(T,Z,ZEst,predictionTimes,EODMean,EODMin,EODMax,trueEOD,loads);%,ref_time,ref_voltage);
+if nargin<2
+    plotleftoverdata(T,Z,ZEst,predictionTimes,EODMean,EODMin,EODMax,trueEOD,loads,ref_time,ref_voltage);
+else
+    plotleftoverdata(T,Z,ZEst,predictionTimes,EODMean,EODMin,EODMax,trueEOD,loads);
+end
+
 outputdata.time = T;
 outputdata.voltage = Z(2,:);
 outputdata.EOD = trueEOD; 
@@ -247,11 +268,12 @@ ax.Color = 'None';
 if nargin>4
     % Plot prediction results
     figure(4);
-    plot(predictionTimes,EODMean,'o',predictionTimes,EODMin,'o',...
-        predictionTimes,EODMax,'o',predictionTimes,...
-        trueEOD*ones(size(predictionTimes)),'o');
-    legend('Predicted EOD Mean','Predicted EOD Max','Predicted EOD Min',...
-        'True EOD');
+    hold on;
+    plot(predictionTimes,EODMean,'o','Color','green','DisplayName','Predicted EOD Mean','MarkerFaceColor','green')
+    plot(predictionTimes,EODMin,'o','Color','red','DisplayName','Predicted EOD Min','MarkerFaceColor','red')
+    plot(predictionTimes,EODMax,'o','Color','blue','DisplayName','Predicted EOD Max','MarkerFaceColor','blue');    
+    plot(predictionTimes,trueEOD*ones(size(predictionTimes)),'o','Color','black','DisplayName','True EOD','MarkerFaceColor','black'); 
+    hold off;
     axis tight;
     % axis square
     box on
