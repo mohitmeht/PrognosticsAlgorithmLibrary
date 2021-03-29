@@ -278,6 +278,7 @@ ax.Color = 'None';
 if nargin>4
     % Plot prediction results
     figure(4);
+    clf;
     hold on;
     plot(predictionTimes,EODMean,'o','Color','green','DisplayName','Predicted EOD Mean','MarkerFaceColor','green')
     plot(predictionTimes,EODMin,'o','Color','red','DisplayName','Predicted EOD Min','MarkerFaceColor','red')
@@ -294,6 +295,7 @@ if nargin>4
 end
 if nargin>9
     figure(2);
+    clf;
     plot(T,Z(2,:),'.',T,ZEst(2,:),'--');
     hold on
     plot(ref_time,ref_voltage,'-','Color','red');
@@ -311,6 +313,7 @@ end
 
 function plotTatEOD(t,curTMin,curTMean,curTMax)
     figure(6)
+    clf;
     hold on;
     plot(t,curTMean,'o','Color','green','DisplayName','Estimated T Mean','MarkerFaceColor','green')
     plot(t,curTMin,'o','Color','red','DisplayName','Estimated T Min','MarkerFaceColor','red')
@@ -322,6 +325,7 @@ function plotTatEOD(t,curTMin,curTMean,curTMax)
     
 function plotEOD(t,curEODMin,curEODMean,curEODMax)
     figure(5)
+    clf;
     hold on;
     plot(t,curEODMean,'o','Color','green','DisplayName','Predicted EOD Mean','MarkerFaceColor','green')
     plot(t,curEODMin,'o','Color','red','DisplayName','Predicted EOD Min','MarkerFaceColor','red')
@@ -333,6 +337,7 @@ function plotEOD(t,curEODMin,curEODMean,curEODMax)
 
 function plotT(t,z)
     figure(1);
+    clf;
     subplot(2,1,1)
     hold on
     plot(t,z(1,:),'o','Color','blue','MarkerFaceColor','blue');
