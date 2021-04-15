@@ -90,9 +90,22 @@ else
     ax.Color = 'None';    
 end
 
-figure(7)
+figure;
 plot(Ttosim,Z(1,:))
-
+xlabel('Time (s)');
+ylabel('Temperature (^\circC)');
+axis square
+box on
+ax = gca;
+ax.Color = 'None'; 
+figure;
+plot(Ttosim,Z(2,:))
+xlabel('Time (s)');
+ylabel('Voltage (V)');
+axis square
+box on
+ax = gca;
+ax.Color = 'None'; 
 % trueEOD = Ttosim(end);
 endTemp = Z(1,end);
 disp(' ')
@@ -120,10 +133,11 @@ UKF = Observers.UnscentedKalmanFilter(@battery.stateEqn,@battery.outputEqn,...
 % For each of the 5 load segments, sample from a uniform distribution with
 % the mean given in the loads vector and the range [-1,+1] W for load and
 % [-60,+60] s for the durations.
-gains = ones(length(loads),1);
-gains(2:2:end) = 10;
-inputParameterSampler = @(N) repmat(loads,1,N) + repmat(gains,1,N).*(rand(length(loads),N)-0.5);
-
+gains = zeros(length(loads),1);
+gains(2:2:end) = 60;
+% inputParameterSampler = @(N) repmat(loads,1,N) + repmat(gains,1,N).*(rand(length(loads),N)-0.5);
+inputISCParameterSampler = @(N) repmat(loads,1,N) + repmat(gains,1,N).*(rand(length(loads),N)-0.5);
+% inputParameterSampler = @(N) repmat(loads,1,N) + repmat(gains,1,N).*(rand(length(loads),N)-0.5);
 % Create Prognoser
 if nargin<2
     horizon = 7200;
@@ -132,7 +146,7 @@ end
 prognoser = Prognosis.Prognoser('model',battery,'observer',UKF,...
     'horizon',horizon,'numSamples',numSamples,...
     'stateSampler',@Observers.meanCovSampler,...
-    'inputParameterSampler',inputParameterSampler,...
+    'inputParameterSampler',inputISCParameterSampler,...
     'processNoiseSampler',@battery.generateProcessNoise);
 
 
