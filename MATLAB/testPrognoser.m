@@ -133,8 +133,10 @@ UKF = Observers.UnscentedKalmanFilter(@battery.stateEqn,@battery.outputEqn,...
 % For each of the 5 load segments, sample from a uniform distribution with
 % the mean given in the loads vector and the range [-1,+1] W for load and
 % [-60,+60] s for the durations.
-gains = zeros(length(loads),1);
-gains(2:2:end) = 60;
+gains = ones(length(loads),1);
+% gains = zeros(length(loads),1); % Mohit
+gains(2:2:end) = 10;
+% gains(2:2:end) = 60; % Mohit
 % inputParameterSampler = @(N) repmat(loads,1,N) + repmat(gains,1,N).*(rand(length(loads),N)-0.5);
 inputISCParameterSampler = @(N) repmat(loads,1,N) + repmat(gains,1,N).*(rand(length(loads),N)-0.5);
 % inputParameterSampler = @(N) repmat(loads,1,N) + repmat(gains,1,N).*(rand(length(loads),N)-0.5);

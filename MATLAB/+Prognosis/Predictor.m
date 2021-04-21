@@ -108,7 +108,8 @@ classdef Predictor < handle
             
             % Sample the input parameters
             inputParameters = inputParameterSampler(numSamples);
-            inputParameters(2,:) = 1200+2000.*(rand(1,numSamples)-0.5);
+%             inputParameters(2,:) = 1200+2000.*(rand(1,numSamples)-0.5); %
+%             Mohit
 %             inputParameters(1,:) = 0; % Only for short circuit % Mohit
             % Compute initial inputs
             U = P.model.inputEqn(t0,inputParameters);
