@@ -116,6 +116,7 @@ fprintf('Ambient temperature: %g degC\n',battery.P.x0.Tb-273.15);
 disp(' ')
 disp('-------- End of final results --------')
 disp(' ')
+drawnow;
 % trueEOD = 433.02;
 battery = Battery.Create;
 % Set up noise covariance matrices
