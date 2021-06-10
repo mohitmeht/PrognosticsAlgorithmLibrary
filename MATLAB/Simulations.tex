@@ -91,6 +91,11 @@ ylabel('Voltage [V]');
 axis square
 box on
 ax = gca;
+\end{matlabcode}
+\begin{center}
+\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_0.png}
+\end{center}
+\begin{matlabcode}
 ax.Color = 'none';
 ax.Position = [0.169444444444445 0.175000069936117 0.822222152286105 0.822222152286105];
 fg = gcf;
@@ -115,7 +120,7 @@ fg.OuterPosition = [643 325 303.6 381];
 ax.FontSize = 12;
 \end{matlabcode}
 \begin{center}
-\includegraphics[width=\maxwidth{30.439872888442878em}]{figure_0.eps}
+\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_1.png}
 \end{center}
 
 
@@ -135,13 +140,12 @@ for i=1:nfaults
     plot(dischargetime(i,:), dischargetemperature(i,:), "Color",c(i,:))    
     
 end
-figure(1)
-hold off
-figure(2)
-hold off
 \end{matlabcode}
 \begin{center}
-\includegraphics[width=\maxwidth{30.439872888442878em}]{figure_1.eps}
+\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_2.png}
+\end{center}
+\begin{center}
+\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_3.png}
 \end{center}
 
 
@@ -153,41 +157,67 @@ oneC = 2.021; %Default value
 crate = 4;
 % disp(crate);
 loadval = oneC.*crate;
-loads = [0;62*60;loadval;3600];
+loads = [0;10*60;loadval;3600];
 % loads = [4.2; 100*36];
 horizon = 3600;
-numSamples = 300;
+numSamples = 100;
 simresults = testPrognoser(loads,horizon,numSamples);
 \end{matlabcode}
 \begin{matlaboutput}
 Maximum current: 0
 \end{matlaboutput}
 \begin{center}
-\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_2.eps}
+\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_4.png}
 \end{center}
 \begin{center}
-\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_3.eps}
+\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_5.png}
+\end{center}
+\begin{center}
+\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_6.png}
 \end{center}
 \begin{matlaboutput}
  
 -------- Final Results --------
  
-Discharge time: 3594 s
-Discharge temperature: 61.0103 degC
+Discharge time: 701.5 s
+Discharge temperature: 80.4983 degC
 Ambient temperature: 58.9 degC
  
 -------- End of final results --------
  
 \end{matlaboutput}
 \begin{center}
-\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_4.eps}
+\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_7.png}
+\end{center}
+\begin{center}
+\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_8.png}
+\end{center}
+
+
+\begin{matlabcode}
+figure
+plot(simresults.time,simresults.minEOD,'o','Color','red','DisplayName','Predicted EOD Min','MarkerFaceColor','red');
+hold on
+plot(simresults.time,simresults.maxEOD,'o','Color','blue','DisplayName','Predicted EOD Max','MarkerFaceColor','blue');
+plot(simresults.time,simresults.meanEOD,'o','Color','green','DisplayName','Predicted EOD Mean','MarkerFaceColor','green');
+hold off
+xlabel('Time (s)');
+ylabel('EOS (s)');
+axis square
+box on
+ax = gca;
+ax.Color = 'None';
+\end{matlabcode}
+\begin{center}
+\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_9.png}
 \end{center}
 \begin{matlabcode}
+
 figure
 plot(simresults.time,simresults.minTemp,'o','Color','red','DisplayName','Predicted T Min','MarkerFaceColor','red');
 hold on
-plot(simresults.time,simresults.maxTemp,'o','Color','blue','DisplayName','Predicted EOD Max','MarkerFaceColor','blue');
-plot(simresults.time,simresults.meanTemp,'o','Color','green','DisplayName','Predicted EOD Mean','MarkerFaceColor','green');
+plot(simresults.time,simresults.maxTemp,'o','Color','blue','DisplayName','Predicted T Max','MarkerFaceColor','blue');
+plot(simresults.time,simresults.meanTemp,'o','Color','green','DisplayName','Predicted T Mean','MarkerFaceColor','green');
 hold off
 xlabel('Time (s)');
 ylabel('Temperature (degC)');
@@ -197,7 +227,7 @@ ax = gca;
 ax.Color = 'None';
 \end{matlabcode}
 \begin{center}
-\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_5.eps}
+\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_10.png}
 \end{center}
 
 
@@ -218,13 +248,38 @@ clear all
 close all
 clf;
 oneC = 2.021; %Default value
-crate = 2;
+crate = 5;
 loadval = oneC.*crate;
 loads = [loadval;3600];
 % loads = [4.2; 100*36];
-horizon = 3000;
+horizon = 5000;
 numSamples = 100;
 simresults = testPrognoser(loads,horizon,numSamples);
+\end{matlabcode}
+\begin{matlaboutput}
+Maximum current: 10.105
+\end{matlaboutput}
+\begin{center}
+\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_11.png}
+\end{center}
+\begin{center}
+\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_12.png}
+\end{center}
+\begin{center}
+\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_13.png}
+\end{center}
+\begin{matlaboutput}
+ 
+-------- Final Results --------
+ 
+Discharge time: 671 s
+Discharge temperature: 72.7139 degC
+Ambient temperature: 58.9 degC
+ 
+-------- End of final results --------
+ 
+\end{matlaboutput}
+\begin{matlabcode}
 figure;
 plot(simresults.time,simresults.voltage)
 figure
@@ -239,6 +294,80 @@ axis square
 box on
 ax = gca;
 ax.Color = 'None';
+\end{matlabcode}
+
+
+\begin{matlabcode}
+clear all
+close all
+addpath('C:\Users\mrmehta\Documents\GitHub\PrognosticsModelLibrary\MATLAB')
+import Battery.*
+clf;
+oneC = 2.021; %Default value
+crate = 5;
+loadval = oneC.*crate;
+loads = [loadval;3600];
+% loads = [4.2; 100*36];
+horizon = 5000;
+numSamples = 100;
+battery = Battery.Create;
+oneC = 2.1; %Default value
+cratio= loads(1)./oneC;
+trueEOD = 3600./cratio;
+trueEODinHr = trueEOD./3600;
+loadval = oneC./trueEODinHr;
+fprintf('Maximum current: %g\n',loadval);
+\end{matlabcode}
+\begin{matlaboutput}
+Maximum current: 10.105
+\end{matlaboutput}
+\begin{matlabcode}
+figure(3);
+plot([0;cumsum(loads(2:2:end))],[loads(1);loads(1:2:end-1)],'-','LineWidth',1.5,'Color','blue');
+xlabel('Time (s)');
+ylabel('Current (A)');
+axis square
+box on
+ax = gca;
+ax.Color = 'None';
+\end{matlabcode}
+\begin{center}
+\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_14.png}
+\end{center}
+\begin{matlabcode}
+drawnow;
+battery.inputEqnHandle = @(P,t)Battery.InputEqn(P,t,loads);
+% battery.P.x0.Tb = 298;
+% battery.P.x0.Tb
+[Ttosim,~,~,Z] = battery.simulateToThreshold();
+trueEOD = Ttosim(end);
+figure;
+plot(Ttosim,Z(1,:))
+xlabel('Time (s)');
+ylabel('Temperature (^\circC)');
+axis square
+box on
+ax = gca;
+ax.Color = 'None'; 
+\end{matlabcode}
+\begin{center}
+\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_15.png}
+\end{center}
+\begin{matlabcode}
+figure;
+plot(Ttosim,Z(2,:))
+xlabel('Time (s)');
+ylabel('Voltage (V)');
+axis square
+box on
+ax = gca;
+ax.Color = 'None'; 
+\end{matlabcode}
+\begin{center}
+\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_16.png}
+\end{center}
+\begin{matlabcode}
+
 \end{matlabcode}
 
 
@@ -284,6 +413,9 @@ box on
 ax = gca;
 ax.Color = 'None';
 \end{matlabcode}
+\begin{center}
+\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_17.png}
+\end{center}
 
 
 \begin{matlabcode}
@@ -299,7 +431,17 @@ ax.Color = 'None';
     ax.Color = 'None';
     subplot(2,1,2)
     hold on    
+\end{matlabcode}
+\begin{center}
+\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_18.png}
+\end{center}
+\begin{matlabcode}
     plot(t,z(2,:),'o','Color','blue','MarkerFaceColor','blue');
+\end{matlabcode}
+\begin{matlaboutput}
+Unrecognized function or variable 't'.
+\end{matlaboutput}
+\begin{matlabcode}
     xlabel('Time (s)')
     ylabel('Voltage (V)');
     axis square
@@ -329,6 +471,9 @@ box on
 ax = gca;
 ax.Color = 'None';
 \end{matlabcode}
+\begin{center}
+\includegraphics[width=\maxwidth{56.196688409433015em}]{figure_19.png}
+\end{center}
 
 
 \begin{matlabcode}
