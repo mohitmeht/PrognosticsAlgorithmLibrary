@@ -20,7 +20,7 @@ if nargin==1
     fprintf('Maximum current: %g\n',loadval);
     battery.inputEqnHandle = @(P,t)Battery.InputEqn(P,t,loads);
     battery.P.modeltype = 'ISCSC';
-    battery.P.VEOD = 2.5;
+    battery.P.VEOD = 1;
     [Ttosim,~,~,Z] = battery.simulateToThreshold();
     trueEOD = Ttosim(end);
 else
@@ -32,5 +32,6 @@ outputdata.voltage = Z(2,:);
 outputdata.EOD = trueEOD; 
 outputdata.temperature= Z(1,:);
 outputdata.ambTemp = parameters.x0.Tb;
+outputdata.VEOD = battery.P.VEOD;
 
 
