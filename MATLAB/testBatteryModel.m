@@ -12,6 +12,7 @@ addpath('C:\Users\mrmehta\Documents\GitHub\PrognosticsModelLibrary\MATLAB')
 import Battery.*
 battery = Battery.Create;
 oneC = 2.021;
+materialproperties = struct();
 if nargin==1
     cratio= loads(1)./oneC;
     trueEOD = 3600./cratio;
@@ -19,8 +20,12 @@ if nargin==1
     loadval = oneC./trueEODinHr;
     fprintf('Maximum current: %g\n',loadval);
     battery.inputEqnHandle = @(P,t)Battery.InputEqn(P,t,loads);
+    materialproperties.anodetype = 'SiC'; % Graphite, SiC
+    materialproperties.cathodetype = 'NMC811'; % LCO, NMC811
+    battery.P = Battery.Parameters(battery.P.qMobile,materialproperties);
     battery.P.modeltype = 'ISCSC';
     battery.P.VEOD = 1;
+
     [Ttosim,~,~,Z] = battery.simulateToThreshold();
     trueEOD = Ttosim(end);
 else
